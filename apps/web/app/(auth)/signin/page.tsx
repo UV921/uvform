@@ -1,27 +1,24 @@
-
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { useSignup } from "~/hooks/api/use-singnup";
+import { useSignin } from "~/hooks/api/use-signin";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 
-export default function SignupPage() {
+export default function SigninPage() {
     const router = useRouter();
-    const { createUserWithEmailAndPasswordAsync, isPending, isSuccess, error } = useSignup();
+    const { signInUserWithEmailAndPasswordAsync, isPending, isSuccess, error } = useSignin();
 
-    const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        await createUserWithEmailAndPasswordAsync({
-            fullName,
+        await signInUserWithEmailAndPasswordAsync({
             email,
             password,
         });
@@ -36,21 +33,10 @@ export default function SignupPage() {
                 className="w-full max-w-sm space-y-5 rounded-2xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur"
             >
                 <div className="space-y-1">
-                    <h1 className="text-2xl font-semibold tracking-tight">Create account</h1>
+                    <h1 className="text-2xl font-semibold tracking-tight">Sign in</h1>
                     <p className="text-sm text-white/60">
-                        Register with your name, email, and password.
+                        Enter your email and password to continue.
                     </p>
-                </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="fullName">Full name</Label>
-                    <Input
-                        id="fullName"
-                        value={fullName}
-                        onChange={(event) => setFullName(event.target.value)}
-                        placeholder="Jane Doe"
-                        className="bg-black/40 border-white/10 text-white placeholder:text-white/30"
-                    />
                 </div>
 
                 <div className="space-y-2">
@@ -78,18 +64,16 @@ export default function SignupPage() {
                 </div>
 
                 {error ? <p className="text-sm text-red-400">{error.message}</p> : null}
-                {isSuccess ? <p className="text-sm text-emerald-400">Account created.</p> : null}
+                {isSuccess ? <p className="text-sm text-emerald-400">Signed in.</p> : null}
 
                 <Button
                     type="submit"
                     className="w-full bg-white text-black hover:bg-white/90"
                     disabled={isPending}
                 >
-                    {isPending ? "Registering..." : "Register"}
+                    {isPending ? "Signing in..." : "Sign in"}
                 </Button>
             </form>
         </main>
     );
 }
-
-
