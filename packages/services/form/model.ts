@@ -1,4 +1,4 @@
-import z from "zod";
+import {z} from "zod";
 export const createFormInput =z.object({
     title:z.string().max(50),
     description:z.string().max(300).optional(),
