@@ -17,7 +17,7 @@ export const formsFeildsTable=pgTable("forms_feild",{
     formId:uuid("form_id").references(()=>formsTable.id),
     label:varchar("label",{length:100}).notNull(),
     labelKey:varchar("label_key",{length:100}).notNull(),
-    desription:text("description"),
+    description:text("description"),
     placeholder:text("placeholder"),
     isRequired:boolean("is_required").default(false).notNull(),
     index:numeric("index").notNull(),

@@ -13,8 +13,11 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Streamyst",
-  description: "Media Forwarding",
+  title: {
+    default: "UvForm",
+    template: "%s · UvForm",
+  },
+  description: "Thoughtful forms, made simple.",
 };
 
 export default function RootLayout({
@@ -23,8 +26,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} min-h-screen`}>
         <GlobalProviders>{children}</GlobalProviders>
       </body>
     </html>

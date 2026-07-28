@@ -62,7 +62,7 @@ export  default class formFeildService{
             formId: r.formId,
             label: r.label,
             labelKey: r.labelKey,
-            description: r.desription ?? null,
+            description: r.description ?? null,
             placeholder: r.placeholder ?? null,
             isRequired: r.isRequired,
             index: r.index.toString(),
