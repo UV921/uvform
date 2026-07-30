@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { use, useState, type FormEvent,useEffect } from "react";
 import Link from "next/link";
 import { Eye, FileText, LoaderCircle, PencilLine, Plus } from "lucide-react";
 
@@ -25,9 +25,26 @@ export default function DashboardForms() {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [editformId, setEditFormId] = useState<string | null>(null);
+  const [deleteFormId, setDeleteFormId] = useState<string | null>(null);
+  const[editDescription,setEditDescription]=useState<string | null>(null)
+  const [editTitle,setEditTitle]=useState('')
+
 
   const { createFormAsync, error, status } = useCreateForm();
   const { forms, isLoading } = useListForms();
+  const editingForm=forms && forms.length && editformId ? forms.find(f=>f.id===editformId):null
+
+  useEffect(()=>{
+    if(editingForm){
+      setEditDescription(editingForm.description ??"")
+      setTitle(editingForm.title)
+    }
+   
+
+  },
+  [editformId]
+  )
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -210,6 +227,7 @@ export default function DashboardForms() {
                         <PencilLine className="size-4" />
                       </Link>
                     </Button>
+                    <Button onClick={()=>setEditFormId(form.id)}>EDIT</Button>
                   </div>
                 </div>
               </article>

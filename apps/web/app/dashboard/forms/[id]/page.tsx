@@ -3,9 +3,9 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, GripVertical, LoaderCircle, PencilLine, Plus } from "lucide-react";
+import { ArrowLeft, GripVertical, LoaderCircle, PencilLine, Plus, Trash } from "lucide-react";
 
-import { useCreateField, useGetFields, useUpdateFeild } from "~/hooks/api/form-feild";
+import { useCreateField, useGetFields, useUpdateFeild ,useDeleteFeild} from "~/hooks/api/form-feild";
 import { Brand } from "~/components/brand";
 import { ThemeToggle } from "~/components/theme-toggle";
 
@@ -34,6 +34,7 @@ export default function FormBuilder() {
   const [placeholder, setPlaceholder] = useState("");
   const [isRequired, setIsRequired] = useState(false);
   const [editFieldId, setEditFieldId] = useState<string | null>(null);
+  const [deleteFieldId, setDeleteFieldId] = useState<string | null>(null);
   const [editLabel, setEditLabel] = useState("");
   const [editType, setEditType] = useState<"TEXT" | "NUMBER" | "EMAIL" | "YES_NO" | "PASSWORD">(
     "TEXT",
@@ -45,6 +46,7 @@ export default function FormBuilder() {
   const { createFieldAsync, status, error } = useCreateField(formId ?? "");
   const { fields, isLoading: fieldsLoading } = useGetFields(formId ?? "");
   const { updateFeildAsync } = useUpdateFeild(formId ?? "");
+  const { deleteFeildAsync } = useDeleteFeild(formId ?? "");
   const editingFeild =
     fields && fields.length && editFieldId ? fields.find((f) => f.id === editFieldId) : null;
   //button click hua for edit
@@ -88,6 +90,11 @@ export default function FormBuilder() {
     });
     setEditFieldId(null);
   };
+  const handleDelete=async (id:string)=>{
+ await deleteFeildAsync({id})
+  }
+   
+  
 
   return (
     <main className="relative isolate min-h-screen overflow-hidden bg-[#f8fbf9] text-stone-950 dark:bg-[#0a0a0b] dark:text-stone-100">
@@ -374,6 +381,16 @@ export default function FormBuilder() {
                       <PencilLine className="size-3.5" />
                       <span className="hidden sm:inline">Edit</span>
                     </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDelete(f.id)}
+                      className="rounded-lg text-stone-600 hover:bg-emerald-950/5 hover:text-stone-950 dark:text-stone-400 dark:hover:bg-white/5 dark:hover:text-stone-100"
+                    >
+                      <Trash className="size-3.5" />
+                      <span className="hidden sm:inline">Delete</span>
+                    </Button>j
                   </div>
                 </div>
               ),

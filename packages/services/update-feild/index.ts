@@ -9,6 +9,9 @@ export default class updateFeildService {
         if(!result || result.length===0){
             throw new Error("not found")
         }
+        if(result[0]!.formId===null ){
+            throw new Error("this feild is not associated with any form")
+        }
         const formID=result[0]!.formId
         const formResult=await db.select().from(formsTable).where(eq(formsTable.id,formID))
         if(!formResult || formResult.length===0){

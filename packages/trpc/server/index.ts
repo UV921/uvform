@@ -5,6 +5,7 @@ import { authRouter } from "./routes/auth/route";
 import { formRouter } from "./routes/form/route";
 import {FormFeildRoute  } from "./routes/form-feild/route";
 import { updateFeildRouter } from "./routes/update-feild/route";
+import { deleteFeildRouter } from "./routes/delete-feild/route";
 
 
 export const serverRouter = router({
@@ -12,7 +13,8 @@ export const serverRouter = router({
   auth:authRouter,
   form:formRouter,
   formFeild:FormFeildRoute,
-  updateFeild:updateFeildRouter
+  updateFeild:updateFeildRouter,
+  delete:deleteFeildRouter
 
 });
 

@@ -89,3 +89,37 @@ export const useUpdateFeild=(formID:string)=>{
 
     }
 }
+
+
+export const useDeleteFeild=(formID:string)=>{
+    const utils=trpc.useUtils()
+
+    const { mutateAsync: deleteFeildAsync,
+    mutate: deleteFeild,
+    error,
+    isPending,
+    isSuccess,
+    status,}=trpc.delete.deleteFeild.useMutation({
+        onSuccess:async(deletFeild)=>{
+            await utils.formFeild.getFormFeild.setData({formId:formID},(oldData=>{
+                if(!oldData) return oldData
+              return  oldData.filter(e=>e.id!==deletFeild.id)
+            
+
+            }))
+
+
+        }
+    })
+
+  return {
+    deleteFeildAsync,
+    deleteFeild,
+    error,
+    isPending,
+    isSuccess,
+    status,
+  };
+
+
+}
