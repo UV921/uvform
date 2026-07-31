@@ -2,9 +2,9 @@
 
 import { useState, type FormEvent, useEffect } from "react";
 import Link from "next/link";
-import { Eye, FilePenLine, FileText, LoaderCircle, PencilLine, Plus } from "lucide-react";
+import { Eye, FilePenLine, FileText, LoaderCircle, PencilLine, Plus, Trash } from "lucide-react";
 
-import { useCreateForm, useEditForm, useListForms } from "~/hooks/api/form";
+import { useCreateForm, useDeleteForm, useEditForm, useListForms } from "~/hooks/api/form";
 import { Brand } from "~/components/brand";
 import { ThemeToggle } from "~/components/theme-toggle";
 
@@ -32,6 +32,7 @@ export default function DashboardForms() {
   const { createFormAsync, error, status } = useCreateForm();
   const { forms, isLoading } = useListForms();
   const {editFormAsync}=useEditForm()
+  const { deleteForm } = useDeleteForm();
   const editingForm =
     forms && forms.length && editFormId ? forms.find((f) => f.id === editFormId) : null;
 
@@ -283,9 +284,21 @@ export default function DashboardForms() {
                   <div className="flex size-10 items-center justify-center rounded-xl border border-emerald-700/15 bg-emerald-600/10 text-emerald-800 transition-colors group-hover:bg-emerald-600/15 dark:border-white/10 dark:bg-white/[0.06] dark:text-stone-300 dark:group-hover:text-white">
                     <FileText className="size-[18px]" />
                   </div>
-                  <span className="text-xs text-stone-500 dark:text-stone-500">
-                    {form.createdAt ? new Date(form.createdAt).toLocaleDateString() : ""}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-stone-500 dark:text-stone-500">
+                      {form.createdAt ? new Date(form.createdAt).toLocaleDateString() : ""}
+                    </span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      aria-label="Delete form"
+                      onClick={() => deleteForm({ id: form.id })}
+                      className="size-8 rounded-lg text-stone-500 hover:bg-red-500/10 hover:text-red-600 dark:text-stone-400 dark:hover:bg-red-500/10 dark:hover:text-red-400"
+                    >
+                      <Trash className="size-4" />
+                    </Button>
+                  </div>
                 </div>
 
                 <div className="mt-5 flex-1">
