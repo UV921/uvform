@@ -54,3 +54,39 @@ export const useListForms = () => {
         status,
     };
 };
+
+export function useEditForm(){
+  const utils=trpc.useUtils();
+  const {
+    mutate: editForm,
+    mutateAsync:editFormAsync,
+    isError,
+    error,
+    isIdle,
+    isSuccess,
+    isPending,
+    status
+  }=trpc.editForm.updateForm.useMutation({
+    onSuccess:async (updatedForm)=>{
+      utils.form.listFormById.setData(undefined,(oldData)=>{
+        if(!oldData) return oldData
+        return oldData.map((form)=>
+        form.id===updatedForm.id?updatedForm:form)
+
+      })
+
+
+    }
+  })
+  return{
+    editForm,
+    editFormAsync,
+    isError,
+    error,
+    isIdle,
+    isSuccess,
+    isPending,
+    status
+
+  }
+}

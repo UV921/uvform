@@ -1,10 +1,10 @@
 "use client";
 
-import { use, useState, type FormEvent,useEffect } from "react";
+import { useState, type FormEvent, useEffect } from "react";
 import Link from "next/link";
-import { Eye, FileText, LoaderCircle, PencilLine, Plus } from "lucide-react";
+import { Eye, FilePenLine, FileText, LoaderCircle, PencilLine, Plus } from "lucide-react";
 
-import { useCreateForm, useListForms } from "~/hooks/api/form";
+import { useCreateForm, useEditForm, useListForms } from "~/hooks/api/form";
 import { Brand } from "~/components/brand";
 import { ThemeToggle } from "~/components/theme-toggle";
 
@@ -25,31 +25,29 @@ export default function DashboardForms() {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [editformId, setEditFormId] = useState<string | null>(null);
-  const [deleteFormId, setDeleteFormId] = useState<string | null>(null);
-  const[editDescription,setEditDescription]=useState<string | null>(null)
-  const [editTitle,setEditTitle]=useState('')
-
+  const [editFormId, setEditFormId] = useState<string | null>(null);
+  const [editDescription, setEditDescription] = useState("");
+  const [editTitle, setEditTitle] = useState("");
 
   const { createFormAsync, error, status } = useCreateForm();
   const { forms, isLoading } = useListForms();
-  const editingForm=forms && forms.length && editformId ? forms.find(f=>f.id===editformId):null
+  const {editFormAsync}=useEditForm()
+  const editingForm =
+    forms && forms.length && editFormId ? forms.find((f) => f.id === editFormId) : null;
 
-  useEffect(()=>{
-    if(editingForm){
-      setEditDescription(editingForm.description ??"")
-      setTitle(editingForm.title)
+  useEffect(() => {
+    if (editingForm) {
+      setEditTitle(editingForm.title);
+      setEditDescription(editingForm.description ?? "");
     }
-   
-
-  },
-  [editformId]
-  )
+  }, [editFormId]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     await createFormAsync({
+     
+     
       title: title.trim(),
       description: description.trim() ? description.trim() : undefined,
     });
@@ -58,6 +56,20 @@ export default function DashboardForms() {
     setTitle("");
     setDescription("");
   };
+
+  const handleEditSubmit = async(event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    await editFormAsync({
+       id:editFormId!,
+       title:editTitle.trim(),
+      description: editDescription.trim() ? editDescription.trim() : null,
+
+    })
+    setEditFormId(null);
+    setEditTitle("");
+    setEditDescription("");
+  };
+  
 
   return (
     <main className="relative isolate min-h-screen overflow-hidden bg-[#f8fbf9] text-stone-950 dark:bg-[#0a0a0b] dark:text-stone-50">
@@ -171,6 +183,88 @@ export default function DashboardForms() {
           </Dialog>
         </div>
 
+        <Dialog
+          open={editFormId !== null}
+          onOpenChange={(nextOpen) => {
+            if (!nextOpen) {
+              setEditFormId(null);
+              setEditTitle("");
+              setEditDescription("");
+            }
+          }}
+        >
+          <DialogContent className="rounded-2xl border-stone-200 bg-white p-6 text-stone-950 shadow-2xl shadow-stone-950/10 dark:border-white/10 dark:bg-[#151517] dark:text-stone-100 dark:shadow-black/40 sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-xl tracking-tight">
+                <FilePenLine className="size-5 text-emerald-700 dark:text-stone-300" />
+                Edit form
+              </DialogTitle>
+              <DialogDescription className="leading-6 text-stone-600 dark:text-stone-400">
+                Update the title and description for this form.
+              </DialogDescription>
+            </DialogHeader>
+
+            <form className="mt-2 space-y-5" onSubmit={handleEditSubmit}>
+              <div className="space-y-2">
+                <label
+                  htmlFor="edit-title"
+                  className="text-sm font-medium text-stone-700 dark:text-stone-300"
+                >
+                  Form name
+                </label>
+                <Input
+                  id="edit-title"
+                  value={editTitle}
+                  onChange={(event) => setEditTitle(event.target.value)}
+                  placeholder="e.g. Event registration"
+                  className="h-11 rounded-xl border-stone-300 bg-white px-4 text-stone-950 shadow-sm placeholder:text-stone-400 focus-visible:border-emerald-600 focus-visible:ring-emerald-600/15 dark:border-white/12 dark:bg-white/[0.045] dark:text-stone-100 dark:shadow-none dark:placeholder:text-stone-600 dark:focus-visible:border-white/30 dark:focus-visible:ring-white/10"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label
+                  htmlFor="edit-description"
+                  className="flex items-center justify-between text-sm font-medium text-stone-700 dark:text-stone-300"
+                >
+                  <span>Description</span>
+                  <span className="text-xs font-normal text-stone-500 dark:text-stone-500">
+                    Optional
+                  </span>
+                </label>
+                <Textarea
+                  id="edit-description"
+                  value={editDescription}
+                  onChange={(event) => setEditDescription(event.target.value)}
+                  placeholder="What is this form for?"
+                  className="min-h-24 resize-none rounded-xl border-stone-300 bg-white px-4 py-3 text-stone-950 shadow-sm placeholder:text-stone-400 focus-visible:border-emerald-600 focus-visible:ring-emerald-600/15 dark:border-white/12 dark:bg-white/[0.045] dark:text-stone-100 dark:shadow-none dark:placeholder:text-stone-600 dark:focus-visible:border-white/30 dark:focus-visible:ring-white/10"
+                />
+              </div>
+
+              <DialogFooter className="pt-1 gap-2 sm:gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setEditFormId(null);
+                    setEditTitle("");
+                    setEditDescription("");
+                  }}
+                  className="h-10 rounded-xl border-stone-300 bg-white px-5 text-stone-700 hover:bg-stone-50 dark:border-white/12 dark:bg-transparent dark:text-stone-300 dark:hover:bg-white/[0.06]"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={editTitle.trim().length === 0}
+                  className="h-10 rounded-xl bg-emerald-700 px-5 text-white hover:bg-emerald-600 dark:bg-stone-100 dark:text-stone-950 dark:hover:bg-white"
+                >
+                  Save changes
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {isLoading ? (
             Array.from({ length: 3 }).map((_, index) => (
@@ -223,11 +317,21 @@ export default function DashboardForms() {
                       size="icon"
                       className="size-8 rounded-lg text-stone-600 hover:bg-emerald-950/5 hover:text-emerald-800 dark:text-stone-400 dark:hover:bg-white/[0.08] dark:hover:text-white"
                     >
-                      <Link href={`/dashboard/forms/${form.id}`} aria-label="Edit form">
+                      <Link href={`/dashboard/forms/${form.id}`} aria-label="Edit form fields">
                         <PencilLine className="size-4" />
                       </Link>
                     </Button>
-                    <Button onClick={()=>setEditFormId(form.id)}>EDIT</Button>
+
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      aria-label="Edit form details"
+                      onClick={() => setEditFormId(form.id)}
+                      className="size-8 rounded-lg text-stone-600 hover:bg-emerald-950/5 hover:text-emerald-800 dark:text-stone-400 dark:hover:bg-white/[0.08] dark:hover:text-white"
+                    >
+                      <FilePenLine className="size-4" />
+                    </Button>
                   </div>
                 </div>
               </article>

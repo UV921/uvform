@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, GripVertical, LoaderCircle, PencilLine, Plus, Trash } from "lucide-react";
@@ -47,21 +47,14 @@ export default function FormBuilder() {
   const { fields, isLoading: fieldsLoading } = useGetFields(formId ?? "");
   const { updateFeildAsync } = useUpdateFeild(formId ?? "");
   const { deleteFeildAsync } = useDeleteFeild(formId ?? "");
-  const editingFeild =
-    fields && fields.length && editFieldId ? fields.find((f) => f.id === editFieldId) : null;
-  //button click hua for edit
-  //id aagyi
-  //then edit feild aagya
-  //
-  useEffect(() => {
-    if (editingFeild) {
-      setEditLabel(editingFeild.label);
-      setEditDescription(editingFeild.description ?? "");
-      setEditType(editingFeild.type);
-      setEditPlaceholder(editingFeild.placeholder ?? "");
-      setEditIsRequired(editingFeild.isRequired);
-    }
-  }, [editFieldId]);
+  const startEditingField = (field: NonNullable<typeof fields>[number]) => {
+    setEditFieldId(field.id);
+    setEditLabel(field.label);
+    setEditDescription(field.description ?? "");
+    setEditType(field.type);
+    setEditPlaceholder(field.placeholder ?? "");
+    setEditIsRequired(field.isRequired);
+  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -337,7 +330,10 @@ export default function FormBuilder() {
                       >
                         Cancel
                       </Button>
-                      <Button className="rounded-lg bg-emerald-700 text-white hover:bg-emerald-600 dark:bg-stone-100 dark:text-stone-950 dark:hover:bg-white">
+                      <Button
+                        type="submit"
+                        className="rounded-lg bg-emerald-700 text-white hover:bg-emerald-600 dark:bg-stone-100 dark:text-stone-950 dark:hover:bg-white"
+                      >
                         Save changes
                       </Button>
                     </div>
@@ -374,23 +370,23 @@ export default function FormBuilder() {
                     <Button
                       type="button"
                       variant="ghost"
-                      size="sm"
-                      onClick={() => setEditFieldId(f.id)}
+                      size="icon-sm"
+                      aria-label={`Edit ${f.label}`}
+                      onClick={() => startEditingField(f)}
                       className="rounded-lg text-stone-600 hover:bg-emerald-950/5 hover:text-stone-950 dark:text-stone-400 dark:hover:bg-white/5 dark:hover:text-stone-100"
                     >
                       <PencilLine className="size-3.5" />
-                      <span className="hidden sm:inline">Edit</span>
                     </Button>
                     <Button
                       type="button"
                       variant="ghost"
-                      size="sm"
+                      size="icon-sm"
+                      aria-label={`Delete ${f.label}`}
                       onClick={() => handleDelete(f.id)}
-                      className="rounded-lg text-stone-600 hover:bg-emerald-950/5 hover:text-stone-950 dark:text-stone-400 dark:hover:bg-white/5 dark:hover:text-stone-100"
+                      className="rounded-lg text-stone-600 hover:bg-red-50 hover:text-red-600 dark:text-stone-400 dark:hover:bg-red-500/10 dark:hover:text-red-400"
                     >
                       <Trash className="size-3.5" />
-                      <span className="hidden sm:inline">Delete</span>
-                    </Button>j
+                    </Button>
                   </div>
                 </div>
               ),
