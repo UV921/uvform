@@ -16,13 +16,12 @@ export const updateFormRouter = router({
     })
     .input(updateFormInputModel)
     .output(updateFormOutputMdoel)
-    .mutation(async ({ctx,input})=>{
-        const {id,description,title}=input
-        const reuslt=await UpdateFormService.updateForm({id,description,title},ctx.user.id)
-        if (!reuslt){
-            throw new Error('')
-        }
-        return reuslt;
-
+    .mutation(async ({ ctx, input }) => {
+      const { id, description, title } = input;
+      const reuslt = await UpdateFormService.updateForm({ id, description, title }, ctx.user.id);
+      if (!reuslt) {
+        throw new Error("");
+      }
+      return reuslt;
     }),
 });
