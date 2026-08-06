@@ -14,9 +14,23 @@ export default class publicFormService {
         const {formId}=await getPublicFormByIdInput.parseAsync(payload)
         const form=await FormService.getFormById({formId})
         const fields=await FormFeildService.getFeild({formId})
+        
         return {
-            form,
-            fields
-        }
+            form: {
+              id: form?.id,
+              title: form?.title,
+              description: form?.description ?? null,
+            },
+      
+            fields: fields.map((field) => ({
+              id: field.id,
+              label: field.label,
+              description: field.description ?? null,
+              placeholder: field.placeholder ?? null,
+              type: field.type,
+              isRequired: field.isRequired,
+              index: field.index,
+            })),
+          };
     }
 }

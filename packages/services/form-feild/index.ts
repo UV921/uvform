@@ -56,6 +56,9 @@ export  default class formFeildService{
         if(!result || result.length===0){
             throw new Error("Went something wrong during geeting feilds ")
         }
+        if(result[0]){
+            throw new Error("NO form esxit with this formId")
+        }
 
         return result.map((r)=>({
             id:r.id,

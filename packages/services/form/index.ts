@@ -46,6 +46,9 @@ export default class formService {
     if(!result || result.length === 0){
       throw new Error("Form not found");
     }
-    return result;
+    if(result[0]){
+      throw new Error("NO form exsit with this formId")
+    }
+    return result[0];
   }
 }
