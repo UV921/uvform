@@ -7,7 +7,11 @@ export const createFormInput =z.object({
 export const listFormByIdInput=z.object({
     userID:z.uuid()
 })
+export const getFormByIdInput=z.object({
+    formId:z.string()
+})
 
 
 export type CreateFormInputType=z.infer<typeof createFormInput>
 export type ListFormByIdInputType=z.infer<typeof listFormByIdInput>
+export type GetFormByIdInputType=z.infer<typeof getFormByIdInput>

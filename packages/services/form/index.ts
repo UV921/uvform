@@ -39,4 +39,13 @@ export default class formService {
     }
     return result;
   }
+
+  public async getFormById(payload:GetFormByIdInputType){
+    const {formId}=await getFormByIdInput.parseAsync(payload)
+    const result=await db.select().from(formsTable).where(eq(formsTable.id,formId))
+    if(!result || result.length === 0){
+      throw new Error("Form not found");
+    }
+    return result;
+  }
 }
